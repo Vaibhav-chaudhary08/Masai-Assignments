@@ -1,0 +1,19 @@
+function Device(name, type, status = false) {
+  this.name = name;
+  this.type = type;
+  this.status = status;
+}
+
+Device.prototype.on = function() {
+  this.status = true;
+  console.log(`${this.name} turned on.`);
+};
+
+Device.prototype.off = function() {
+  this.status = false;
+  console.log(`${this.name} turned off.`);
+};
+
+Device.prototype.getStatus = function() {
+  return this.status;
+};
