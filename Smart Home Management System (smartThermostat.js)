@@ -1,0 +1,18 @@
+function SmartThermostat(name, brand, temperature = 20, mode = "auto") {
+  SmartDevice.call(this, name, "thermostat", brand);
+  this.temperature = temperature;
+  this.mode = mode;
+}
+
+SmartThermostat.prototype = Object.create(SmartDevice.prototype);
+SmartThermostat.prototype.constructor = SmartThermostat;
+
+SmartThermostat.prototype.setTemperature = function(temperature) {
+  this.temperature = temperature;
+  console.log(`${this.name} temperature set to ${this.temperature}°C.`);
+};
+
+SmartThermostat.prototype.setMode = function(mode) {
+  this.mode = mode;
+  console.log(`${this.name} mode set to ${this.mode}.`);
+};
