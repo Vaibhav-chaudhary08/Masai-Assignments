@@ -1,0 +1,31 @@
+const user = new User("alice", "password123");
+const smartHome = new SmartHome("Alice");
+user.smartHome = smartHome;
+
+async function runDemo() {
+  const isAuthenticated = await user.authenticate();
+  if (isAuthenticated) {
+    const smartLight = new SmartLight("Living Room Light", "Philips");
+    const smartThermostat = new SmartThermostat("Living Room Thermostat", "Nest");
+
+    user.addDeviceToHome(smartLight);
+    user.addDeviceToHome(smartThermostat);
+
+    smartLight.adjustBrightness(50);
+    smartLight.setColor("yellow");
+    smartThermostat.setTemperature(22);
+    smartThermostat.setMode("cool");
+
+    await smartLight.updateFirmware();
+    smartLight.checkConnectivity();
+
+    user.controlDevice("Living Room Light", "off");
+    user.controlDevice("Living Room Thermostat", "on");
+
+    user.smartHome.listDevices();
+    user.removeDeviceFromHome("Living Room Light");
+    user.smartHome.listDevices();
+  }
+}
+
+runDemo();
