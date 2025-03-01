@@ -1,0 +1,19 @@
+function SmartHome(owner, devices = []) {
+  this.owner = owner;
+  this.devices = devices;
+}
+
+SmartHome.prototype.addDevice = function(device) {
+  this.devices.push(device);
+  console.log(`${device.name} added to ${this.owner}'s smart home.`);
+};
+
+SmartHome.prototype.removeDevice = function(deviceName) {
+  this.devices = this.devices.filter(device => device.name !== deviceName);
+  console.log(`${deviceName} removed from ${this.owner}'s smart home.`);
+};
+
+SmartHome.prototype.listDevices = function() {
+  console.log(`${this.owner}'s devices:`);
+  this.devices.forEach(device => console.log(`- ${device.name} (${device.type})`));
+};
