@@ -1,0 +1,18 @@
+function SmartLight(name, brand, brightness = 100, color = "white") {
+  SmartDevice.call(this, name, "light", brand);
+  this.brightness = brightness;
+  this.color = color;
+}
+
+SmartLight.prototype = Object.create(SmartDevice.prototype);
+SmartLight.prototype.constructor = SmartLight;
+
+SmartLight.prototype.adjustBrightness = function(brightness) {
+  this.brightness = brightness;
+  console.log(`${this.name} brightness set to ${this.brightness}.`);
+};
+
+SmartLight.prototype.setColor = function(color) {
+  this.color = color;
+  console.log(`${this.name} color set to ${this.color}.`);
+};
