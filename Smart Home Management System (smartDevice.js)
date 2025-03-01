@@ -1,0 +1,26 @@
+function SmartDevice(name, type, brand, connectivity = true) {
+  Device.call(this, name, type);
+  this.brand = brand;
+  this.connectivity = connectivity;
+}
+
+SmartDevice.prototype = Object.create(Device.prototype);
+SmartDevice.prototype.constructor = SmartDevice;
+
+SmartDevice.prototype.updateFirmware = async function() {
+  console.log(`Checking for firmware update for ${this.name}...`);
+  try {
+    const response = await fetch("https://mock-firmware-update.com/update");
+    if (response.ok) {
+      console.log(`${this.name} firmware updated successfully.`);
+    } else {
+      console.error(`Failed to update firmware for ${this.name}.`);
+    }
+  } catch (error) {
+    console.error(`Error updating firmware for ${this.name}:`, error);
+  }
+};
+
+SmartDevice.prototype.checkConnectivity = function() {
+  console.log(`${this.name} connectivity: ${this.connectivity ? "Connected" : "Disconnected"}`);
+};
