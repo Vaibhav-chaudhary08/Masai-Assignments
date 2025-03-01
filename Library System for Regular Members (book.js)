@@ -1,0 +1,41 @@
+function Book(title, author, isAvailable = true) {
+  this.title = title;
+  this.author = author;
+  this.isAvailable = isAvailable;
+}
+
+function Member(name, borrowedBooks = []) {
+  this.name = name;
+  this.borrowedBooks = borrowedBooks;
+}
+
+Member.prototype.borrowBook = function(book) {
+  if (this.borrowedBooks.length >= 3) {
+    console.log(`${this.name} has reached the maximum borrowing limit (3 books).`);
+    return;
+  }
+  if (book.isAvailable) {
+    book.isAvailable = false;
+    this.borrowedBooks.push(book.title);
+    console.log(`${this.name} borrowed "${book.title}".`);
+  } else {
+    console.log(`"${book.title}" is already borrowed.`);
+  }
+};
+
+
+function PremiumMember(name, borrowedBooks = []) {
+  Member.call(this, name, borrowedBooks);
+  this.specialCollectionAccess = true;
+}
+
+PremiumMember.prototype = Object.create(Member.prototype);
+PremiumMember.prototype.constructor = PremiumMember;
+
+PremiumMember.prototype.borrowBook = function(book) {
+  if (this.borrowedBooks.length >= 5) {
+    console.log(`${this.name} has reached the maximum borrowing limit (5 books).`);
+    return;
+  }
+  Member.prototype.borrowBook.call(this, book); // Reuse Member's borrowBook method
+};
