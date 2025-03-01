@@ -1,0 +1,28 @@
+import { Book } from "./book.js";
+import { Member } from "./member.js";
+import { PremiumMember } from "./premiumMember.js";
+
+const book1 = new Book("The Silent Patient", "Alex Michaelides");
+const book2 = new Book("Where the Crawdads Sing", "Delia Owens");
+const book3 = new Book("The Midnight Library", "Matt Haig");
+const book4 = new Book("Project Hail Mary", "Andy Weir");
+const book5 = new Book("Dune", "Frank Herbert");
+const book6 = new Book("The Night Circus", "Erin Morgenstern");
+
+const regularMember = new Member("Alice");
+const premiumMember = new PremiumMember("Bob");
+
+regularMember.borrowBook(book1);
+regularMember.borrowBook(book2);
+regularMember.borrowBook(book3);
+regularMember.borrowBook(book4);
+
+premiumMember.borrowBook(book4);
+premiumMember.borrowBook(book5);
+premiumMember.borrowBook(book6);
+premiumMember.borrowBook(book1);
+premiumMember.borrowBook(book2);
+premiumMember.borrowBook(book3);
+
+const aliceBorrow = regularMember.borrowBook.bind(regularMember);
+aliceBorrow(book4)
