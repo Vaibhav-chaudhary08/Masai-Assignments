@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DOM Manipulation</title>
+</head>
+<body>
+    <ul id="item-list">
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
+    <button id="add-item-button">Add Item</button>
+
+    <script>
+        const itemList = document.querySelector('#item-list');
+        const addButton = document.querySelector('#add-item-button');
+        let itemCount = itemList.children.length;
+
+        addButton.addEventListener('click', function() {
+            const newItem = document.createElement('li');
+            newItem.textContent = 'New Item';
+            itemList.appendChild(newItem);
+            itemCount++;
+
+            if (itemCount % 2 === 1) {
+                newItem.style.fontWeight = 'bold';
+                newItem.style.color = 'blue';
+            } else {
+                newItem.style.fontStyle = 'italic';
+                newItem.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
