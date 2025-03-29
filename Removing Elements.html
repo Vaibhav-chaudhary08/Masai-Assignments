@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>L0 - Creating and Removing Elements</title>
+<style>
+#paragraphContainer {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+</style>
+</head>
+<body>
+
+<button id="addParagraph">Add Paragraph</button>
+<button id="removeParagraph">Remove Last Paragraph</button>
+
+<div id="paragraphContainer"></div>
+
+<script>
+  const addParagraphButton = document.getElementById('addParagraph');
+  const removeParagraphButton = document.getElementById('removeParagraph');
+  const paragraphContainer = document.getElementById('paragraphContainer');
+
+  addParagraphButton.addEventListener('click', () => {
+    const newParagraph = document.createElement('p');
+    newParagraph.textContent = 'This is a new paragraph.';
+    paragraphContainer.appendChild(newParagraph);
+  });
+
+  removeParagraphButton.addEventListener('click', () => {
+      if (paragraphContainer.lastElementChild) {
+        paragraphContainer.removeChild(paragraphContainer.lastElementChild);
+      }
+  });
+</script>
+
+</body>
+</html>
