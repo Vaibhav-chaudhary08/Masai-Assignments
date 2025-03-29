@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>L0 - Traversing the DOM: Parent and Sibling Navigation</title>
+</head>
+<body>
+
+<div id="container">
+  <ul id="list">
+    <li id="item1">Item 1</li>
+    <li id="item2">Item 2</li>
+    <li id="item3">Item 3</li>
+  </ul>
+</div>
+
+<script>
+  // Get the element with the ID 'item2'
+  const item2 = document.getElementById('item2');
+
+  // 1. Log the parent element of 'item2' to the console.
+  console.log("Parent of item2:", item2.parentElement);
+
+  // 2. Log the next sibling of 'item2' to the console.
+  console.log("Next sibling of item2:", item2.nextElementSibling);
+
+  // 3. Log the previous sibling of 'item2' to the console.
+  console.log("Previous sibling of item2:", item2.previousElementSibling);
+
+  // 4. Log the first child of the parent of item2 (which is the list) to the console.
+  console.log("First child of item2's parent:", item2.parentElement.firstElementChild);
+
+  // 5. Log the last child of the parent of item2 (which is the list) to the console.
+  console.log("Last child of item2's parent:", item2.parentElement.lastElementChild);
+
+</script>
+
+</body>
+</html>
