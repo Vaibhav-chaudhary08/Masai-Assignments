@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>L1 - Enhanced Todo List</title>
+  <style>
+    .completed {
+      text-decoration: line-through;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <input type="text" id="taskInput" placeholder="Enter task">
+  <button id="addTask">Add Task</button><br><br>
+  <input type="text" id="search" placeholder="Search tasks">
+  <ul id="taskList"></ul>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const addTaskButton = document.getElementById('addTask');
+    const taskList = document.getElementById('taskList');
+    const searchInput = document.getElementById('search');
+    const tasksKey = 'todoTasks';
+
+    let tasks = JSON.parse(localStorage.getItem(tasksKey)) || [];
+
+    function renderTasks(filteredTasks = tasks) {
+      taskList.innerHTML = filteredTasks.map((task, index) => `
+        <li data-index="${index}" class="${task.completed ? 'completed' : ''}">
+          ${task.text}
+          <button class="remove">Remove</button>
+        </li>
+      `).join('');
+    }
+
+    function updateLocalStorage() {
+      localStorage.setItem(tasksKey, JSON.stringify(tasks));
+    }
+
+    addTaskButton.addEventListener('click', () => {
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        tasks.push({ text: taskText, completed: false });
+        taskInput.value = '';
+        updateLocalStorage();
+        renderTasks();
+      }
+    });
+
+    taskList.addEventListener('click', (event) => {
+      const target = event.target;
+      const listItem = target.closest('li');
+      if (!listItem) return;
+
+      const index = parseInt(listItem.dataset.index);
+
+      if (target.classList.contains('remove')) {
+        tasks.splice(index, 1);
+      } else {
+        tasks[index].completed = !tasks[index].completed;
+      }
+
+      updateLocalStorage();
+      renderTasks();
+    });
+
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filteredTasks = tasks.filter(task =>
+        task.text.toLowerCase().includes(searchTerm)
+      );
+      renderTasks(filteredTasks);
+    });
+
+    renderTasks();
+  </script>
+
+</body>
+</html>
