@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>L1 - Debug a Weather Fetch App</title>
+</head>
+<body>
+
+  <form id="weatherForm">
+    <input type="text" id="city" placeholder="Enter city name">
+    <button type="submit">Get Weather</button>
+  </form>
+
+  <div id="weather"></div>
+
+  <script>
+    const weatherForm = document.getElementById('weatherForm');
+    const cityInput = document.getElementById('city');
+    const weatherDisplay = document.getElementById('weather');
+    const apiKey = 'YOUR_API_KEY';
+
+    weatherForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const city = cityInput.value.trim();
+
+      if (!city) {
+        weatherDisplay.textContent = 'Please enter a city name.';
+        return;
+      }
+
+      try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('City not found.');
+          } else {
+            throw new Error('Failed to fetch weather data.');
+          }
+        }
+
+        const data = await response.json();
+        const temperature = data.main.temp;
+        const description = data.weather[0].description;
+
+        weatherDisplay.textContent = `Weather in ${city}: ${temperature}°C, ${description}`;
+      } catch (error) {
+        weatherDisplay.textContent = error.message;
+      }
+    });
+  </script>
+
+</body>
+</html>
