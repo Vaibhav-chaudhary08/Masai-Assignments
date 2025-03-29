@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>L1 - Event Propagation Exploration</title>
+<style>
+#outer {
+  background-color: lightblue;
+  padding: 20px;
+}
+#middle {
+  background-color: lightgreen;
+  padding: 20px;
+  margin: 10px;
+}
+#inner {
+  background-color: lightcoral;
+  padding: 20px;
+  margin: 10px;
+}
+</style>
+</head>
+<body>
+
+<div id="outer">
+  Outer Div
+  <div id="middle">
+    Middle Div
+    <div id="inner">
+      Inner Div
+      <button id="innerButton">Inner Button</button>
+    </div>
+    <button id="middleButton">Middle Button</button>
+  </div>
+  <button id="outerButton">Outer Button</button>
+</div>
+
+<script>
+  const outerDiv = document.getElementById('outer');
+  const middleDiv = document.getElementById('middle');
+  const innerDiv = document.getElementById('inner');
+  const outerButton = document.getElementById('outerButton');
+  const middleButton = document.getElementById('middleButton');
+  const innerButton = document.getElementById('innerButton');
+
+  function showAlert(event) {
+    alert(event.currentTarget.id || event.currentTarget.tagName);
+  }
+
+  outerDiv.addEventListener('click', showAlert);
+  middleDiv.addEventListener('click', showAlert);
+  innerDiv.addEventListener('click', showAlert);
+  outerButton.addEventListener('click', showAlert);
+  middleButton.addEventListener('click', showAlert);
+  innerButton.addEventListener('click', showAlert);
+
+  outerDiv.addEventListener('click', showAlert, true);
+  middleDiv.addEventListener('click', showAlert, true);
+  innerDiv.addEventListener('click', showAlert, true);
+  outerButton.addEventListener('click', showAlert, true);
+  middleButton.addEventListener('click', showAlert, true);
+  innerButton.addEventListener('click', showAlert, true);
+
+  innerButton.addEventListener('click', function(event) {
+    event.stopPropagation();
+    alert('Inner Button (Propagation Stopped)');
+  });
+</script>
+
+</body>
+</html>
