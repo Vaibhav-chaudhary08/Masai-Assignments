@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>L0 - Dynamic Theme Selector</title>
+  <style>
+    body {
+      transition: background-color 0.3s, color 0.3s;
+    }
+    #themeSelector {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <select id="themeSelector">
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+    <option value="blue">Blue</option>
+  </select>
+
+  <script>
+    const themeSelector = document.getElementById('themeSelector');
+    const themeKey = 'selectedTheme';
+
+    function applyTheme(theme) {
+      switch (theme) {
+        case 'dark':
+          document.body.style.backgroundColor = '#333';
+          document.body.style.color = '#fff';
+          break;
+        case 'blue':
+          document.body.style.backgroundColor = '#add8e6';
+          document.body.style.color = '#000';
+          break;
+        default:
+          document.body.style.backgroundColor = '#fff';
+          document.body.style.color = '#000';
+      }
+    }
+
+    window.onload = function() {
+      const savedTheme = sessionStorage.getItem(themeKey);
+      if (savedTheme) {
+        themeSelector.value = savedTheme;
+        applyTheme(savedTheme);
+      }
+    };
+
+    themeSelector.addEventListener('change', (event) => {
+      const selectedTheme = event.target.value;
+      sessionStorage.setItem(themeKey, selectedTheme);
+      applyTheme(selectedTheme);
+    });
+  </script>
+
+</body>
+</html>
