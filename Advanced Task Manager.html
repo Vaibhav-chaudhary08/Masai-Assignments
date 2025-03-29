@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Task Manager</title>
+  <style>
+    body { font-family: sans-serif; }
+    #taskList li { cursor: pointer; padding: 8px; border-bottom: 1px solid #eee; }
+    #taskList li.completed { text-decoration: line-through; color: #888; }
+    #taskInput { padding: 8px; }
+    #addTask { padding: 8px; }
+    #filters button { padding: 5px 10px; margin-right: 5px; }
+    #sort button { padding: 5px 10px; margin-right: 5px; }
+  </style>
+</head>
+<body>
+
+  <input type="text" id="taskInput" placeholder="Enter task">
+  <button id="addTask">Add Task</button>
+
+  <div id="filters">
+    <button data-filter="all">All</button>
+    <button data-filter="active">Active</button>
+    <button data-filter="completed">Completed</button>
+  </div>
+
+  <div id="sort">
+    <button data-sort="asc">Sort A-Z</button>
+    <button data-sort="desc">Sort Z-A</button>
+  </div>
+
+  <ul id="taskList"></ul>
+  <p id="taskCount">Tasks: 0</p>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const addTaskButton = document.getElementById('addTask');
+    const taskList = document.getElementById('taskList');
+    const taskCount = document.getElementById('taskCount');
+    const filters = document.getElementById('filters');
+    const sortButtons = document.getElementById('sort');
+
+    let tasks = [];
+    let currentFilter = 'all';
+    let currentSort = null;
+
+    function renderTasks() {
+      let filteredTasks = [...tasks];
+
+      if (currentFilter === 'active') {
+        filteredTasks = filteredTasks.filter(task => !task.completed);
+      } else if (currentFilter === 'completed') {
+        filteredTasks = filteredTasks.filter(task => task.completed);
+      }
+
+      if (currentSort === 'asc') {
+        filteredTasks.sort((a, b) => a.text.localeCompare(b.text));
+      } else if (currentSort === 'desc') {
+        filteredTasks.sort((a, b) => b.text.localeCompare(a.text));
+      }
+
+      taskList.innerHTML = filteredTasks.map((task, index) =>
+        `<li data-index="${index}" class="${task.completed ? 'completed' : ''}">${task.text}</li>`
+      ).join('');
+
+      taskCount.textContent = `Tasks: ${tasks.length}`;
+    }
+
+    addTaskButton.addEventListener('click', () => {
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        tasks.push({ text: taskText, completed: false });
+        taskInput.value = '';
+        renderTasks();
+      }
+    });
+
+    taskList.addEventListener('click', (event) => {
+      if (event.target.tagName === 'LI') {
+        const index = parseInt(event.target.dataset.index);
+        tasks[index].completed = !tasks[index].completed;
+        renderTasks();
+      }
+    });
+
+    filters.addEventListener('click', (event) => {
+      if (event.target.tagName === 'BUTTON') {
+        currentFilter = event.target.dataset.filter;
+        renderTasks();
+      }
+    });
+
+    sortButtons.addEventListener('click', (event) => {
+      if (event.target.tagName === 'BUTTON') {
+        currentSort = event.target.dataset.sort;
+        renderTasks();
+      }
+    });
+
+    renderTasks();
+  </script>
+
+</body>
+</html>
