@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <title>Recipe Sharing Apps</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>Recipe Sharing Apps</h1>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#add-recipe">Add Recipe</a></li>
+                    <li><a href="view-recipes">View Recipes</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="home">
+            <h2>Welcome to Recipe Sharing Apps</h2>
+            <p>Share your favourite recipes</p>
+        </section>
+
+        <section id="add-recipe">
+            <h2>Add a New Recipe</h2>
+            <form id="recipe-form">
+                <label for="recipe-name">Recipe Name:</label>
+                <input type="text" id="recipe-name" required><br>
+
+                <label for="ingredients">Ingredients</label>
+                <textarea id="ingredients" required></textarea><br>
+
+                <label for="category">Category:</label>
+                <select id="category">
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="dessert">Dessert</option>
+                    <option value="drinks">Drinks</option>
+                </select><br>
+
+                <label for="steps">Preparation Steps:</label>
+                <textarea id="steps" required></textarea><br>
+
+                <button type="submit">Add Recipe</button>
+            </form>
+        </section>
+
+        <section id="view-recipes">
+            <h2>View Recipes</h2>
+            <div id="recipe-list"></div>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 Recipe Sharing Apps</p>
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
+</html>
