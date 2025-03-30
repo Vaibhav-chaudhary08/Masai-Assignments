@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Todo List</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        #todo-container {
+            width: 400px;
+            margin: auto;
+        }
+        #todo-input {
+            width: 70%;
+            padding: 8px;
+            margin-right: 5px;
+        }
+        #add-button {
+            padding: 8px 15px;
+        }
+        #search-input {
+            width: 98%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+        .remove-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="todo-container">
+        <input type="text" id="todo-input" placeholder="Add a new task">
+        <button id="add-button">Add</button>
+        <input type="text" id="search-input" placeholder="Search tasks">
+        <div id="todo-list"></div>
+    </div>
+
+    <script>
+        const todoInput = document.getElementById('todo-input');
+        const addButton = document.getElementById('add-button');
+        const todoList = document.getElementById('todo-list');
+        const searchInput = document.getElementById('search-input');
+
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        function renderTodos(filteredTodos = todos) {
+            todoList.innerHTML = '';
+            filteredTodos.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.classList.add('todo-item');
+                todoItem.innerHTML = `
+                    <span class="${todo.completed ? 'completed' : ''}">${todo.text}</span>
+                    <div>
+                        <button class="remove-button" data-index="${index}">Remove</button>
+                    </div>
+                `;
+
+                const taskText = todoItem.querySelector('span');
+                taskText.addEventListener('click', () => {
+                    todo.completed = !todo.completed;
+                    updateLocalStorage();
+                    renderTodos();
+                });
+
+                todoList.appendChild(todoItem);
+            });
+
+            // Add event listeners for remove buttons
+            const removeButtons = document.querySelectorAll('.remove-button');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const index = parseInt(button.dataset.index);
+                    todos.splice(index, 1);
+                    updateLocalStorage();
+                    renderTodos();
+                });
+            });
+        }
+
+        function updateLocalStorage() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        addButton.addEventListener('click', () => {
+            const text = todoInput.value.trim();
+            if (text) {
+                todos.push({ text: text, completed: false });
+                updateLocalStorage();
+                renderTodos();
+                todoInput.value = '';
+            }
+        });
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredTodos = todos.filter(todo => todo.text.toLowerCase().includes(searchTerm));
+            renderTodos(filteredTodos);
+        });
+
+        renderTodos();
+    </script>
+</body>
+</html>
