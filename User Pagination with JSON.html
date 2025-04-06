@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Pagination</title>
+    <style>
+        #users-container {
+            margin-top: 20px;
+        }
+        .user-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        #pagination-container {
+            margin-top: 20px;
+        }
+        #pagination-container button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Users</h1>
+    <div id="users-container"></div>
+    <div id="pagination-container"></div>
+
+    <script>
+        const usersContainer = document.getElementById('users-container');
+        const paginationContainer = document.getElementById('pagination-container');
+        const apiUrl = 'https://jsonplaceholder.typicode.com/users';
+        const limit = 6;
+        let currentPage = 1;
+
+        async function fetchUsers(page) {
+            try {
+                const response = await fetch(`${apiUrl}?_page=${page}&_limit=${limit}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const users = await response.json();
+                displayUsers(users);
+                currentPage = page;
+                displayPagination(page);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                usersContainer.innerHTML = `<p style="color: red;">Error fetching data: ${error.message}</p>`;
+            }
+        }
+
+        function displayUsers(users) {
+            usersContainer.innerHTML = '';
+            users.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.classList.add('user-item');
+                userItem.innerHTML = `
+                    <p><strong>Name:</strong> ${user.name}</p>
+                    <p><strong>Username:</strong> ${user.username}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                `;
+                usersContainer.appendChild(userItem);
+            });
+        }
+
+        async function getTotalPages() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const users = await response.json();
+                return Math.ceil(users.length / limit);
+            } catch (error) {
+                console.error('Error getting total pages:', error);
+                return 1;
+            }
+        }
+
+        async function displayPagination(currentPage) {
+            const totalPages = await getTotalPages();
+
+            paginationContainer.innerHTML = '';
+
+            const previousButton = document.createElement('button');
+            previousButton.textContent = 'Previous';
+            previousButton.disabled = currentPage === 1;
+            previousButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    fetchUsers(currentPage - 1);
+                }
+            });
+            paginationContainer.appendChild(previousButton);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                if (i === currentPage) {
+                    pageButton.disabled = true;
+                }
+                pageButton.addEventListener('click', () => {
+                    fetchUsers(i);
+                });
+                paginationContainer.appendChild(pageButton);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    fetchUsers(currentPage + 1);
+                }
+            });
+            paginationContainer.appendChild(nextButton);
+        }
+
+        fetchUsers(currentPage);
+    </script>
+</body>
+</html>
