@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="User Dashboard.css">
+</head>
+<body>
+    <header>
+        <h1>User Management Dashboard</h1>
+    </header>
+
+    <main class="dashboard-container">
+        <section id="user-list-section" class="dashboard-section">
+            <h2>Existing Users</h2>
+            <div id="list-feedback" class="feedback-area">
+                </div>
+            <ul id="user-list">
+                <li>Loading users...</li>
+            </ul>
+        </section>
+
+        <section id="add-user-section" class="dashboard-section">
+            <h2>Add New User</h2>
+            <form id="add-user-form">
+                <div id="form-feedback" class="feedback-area">
+                    </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required minlength="6">
+                    <small>Minimum 6 characters</small>
+                </div>
+
+                <button type="submit" id="add-button">
+                    Add User
+                    <span id="add-loading" class="loading hidden"></span>
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <script src="User Dashboard.js"></script>
+</body>
+</html>
