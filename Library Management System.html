@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        body { font-family: sans-serif; }
+        #books, #members { margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        #pagination { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Library Management System</h1>
+
+    <h2>Books</h2>
+    <div id="book-filters">
+        <label>Genre: <input type="text" id="book-genre-filter"></label>
+        <label>Author: <input type="text" id="book-author-filter"></label>
+        <label>Available: <select id="book-available-filter"><option value="">All</option><option value="true">Yes</option><option value="false">No</option></select></label>
+        <label>Sort By: <select id="book-sort-by"><option value="title">Title</option><option value="author">Author</option></select></label>
+    </div>
+    <table id="books"></table>
+    <div id="book-pagination"></div>
+    <button id="add-book-button">Add Book</button>
+
+    <h2>Members</h2>
+    <div id="member-filters">
+        <label>Name: <input type="text" id="member-name-filter"></label>
+        <label>Active: <select id="member-active-filter"><option value="">All</option><option value="true">Yes</option><option value="false">No</option></select></label>
+        <label>Sort By: <select id="member-sort-by"><option value="name">Name</option><option value="membershipDate">Membership Date</option></select></label>
+    </div>
+    <table id="members"></table>
+    <div id="member-pagination"></div>
+    <button id="add-member-button">Add Member</button>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="Library Management System.js"></script>
+</body>
+</html>
