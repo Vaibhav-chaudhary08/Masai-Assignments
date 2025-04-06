@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos with Pagination</title>
+    <style>
+        #todos-container {
+            margin-top: 20px;
+        }
+        .todo-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        #pagination-container {
+            margin-top: 20px;
+        }
+        #pagination-container button{
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todos</h1>
+    <div id="todos-container"></div>
+    <div id="pagination-container"></div>
+
+    <script>
+        const todosContainer = document.getElementById('todos-container');
+        const paginationContainer = document.getElementById('pagination-container');
+        const apiUrl = 'https://jsonplaceholder.typicode.com/todos';
+        const limit = 10;
+        let currentPage = 1;
+
+        async function fetchTodos(page) {
+            try {
+                const response = await fetch(`${apiUrl}?_page=${page}&_limit=${limit}`);
+                const todos = await response.json();
+                displayTodos(todos);
+                currentPage = page;
+                displayPagination(page);
+            } catch (error) {
+                console.error('Error fetching todos:', error);
+            }
+        }
+
+        function displayTodos(todos) {
+            todosContainer.innerHTML = '';
+            todos.forEach(todo => {
+                const todoItem = document.createElement('div');
+                todoItem.classList.add('todo-item');
+                todoItem.innerHTML = `
+                    <p><strong>Title:</strong> ${todo.title}</p>
+                    <p><strong>Completed:</strong> ${todo.completed ? 'Yes' : 'No'}</p>
+                `;
+                todosContainer.appendChild(todoItem);
+            });
+        }
+
+        async function getTotalPages(){
+            try {
+                const response = await fetch(apiUrl);
+                const todos = await response.json();
+                return Math.ceil(todos.length / limit);
+            }catch(error){
+                console.log("error getting total pages", error);
+                return 1;
+            }
+        }
+
+        async function displayPagination(currentPage) {
+            const totalPages = await getTotalPages();
+
+            paginationContainer.innerHTML = '';
+
+            const previousButton = document.createElement('button');
+            previousButton.textContent = 'Previous';
+            previousButton.disabled = currentPage === 1;
+            previousButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    fetchTodos(currentPage - 1);
+                }
+            });
+            paginationContainer.appendChild(previousButton);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                if (i === currentPage) {
+                    pageButton.disabled = true;
+                }
+                pageButton.addEventListener('click', () => {
+                    fetchTodos(i);
+                });
+                paginationContainer.appendChild(pageButton);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    fetchTodos(currentPage + 1);
+                }
+            });
+            paginationContainer.appendChild(nextButton);
+        }
+
+        fetchTodos(currentPage);
+    </script>
+</body>
+</html>
