@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel List</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Novel List</h1>
+
+    <div id="filters">
+        <label>Release Year: <input type="number" id="yearFilter"></label>
+        <button onclick="filterByYear()">Filter</button>
+        <button onclick="resetFilters()">Reset</button>
+        <label>Sort By Price:
+            <select id="priceSort">
+                <option value="">None</option>
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </label>
+        <label>Search: <input type="text" id="searchInput" oninput="searchNovels()"></label>
+    </div>
+
+    <table id="novelTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Price</th>
+                <th>Release Year</th>
+                <th>Genre</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "MY_API_KEY",
+            authDomain: "MY_AUTH_DOMAIN",
+            projectId: "MY_PROJECT_ID",
+            storageBucket: "MY_STORAGE_BUCKET",
+            messagingSenderId: "MY_MESSAGING_SENDER_ID",
+            appId: "MY_APP_ID",
+            measurementId: "MY_MEASUREMENT_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const novelsCollection = db.collection('novels');
+        const novelData = [
+            { "title": "The Great Adventure", "author": "John Doe", "price": 19.99, "release_year": 2020, "genre": "Adventure" },
+            { "title": "Mystery of the Lost World", "author": "Jane Smith", "price": 15.99, "release_year": 2021, "genre": "Mystery" },
+            { "title": "The Journey Begins", "author": "Mark Johnson", "price": 25.00, "release_year": 2022, "genre": "Fantasy" },
+            { "title": "The Last Escape", "author": "Emily White", "price": 18.50, "release_year": 2019, "genre": "Thriller" }
+        ];
+
+        async function loadNovels() {
+          novelData.forEach(async (novel) => {
+            await novelsCollection.add(novel);
+          });
+        }
+        async function displayNovels(querySnapshot) {
+            const tableBody = document.querySelector('#novelTable tbody');
+            tableBody.innerHTML = '';
+
+            querySnapshot.forEach(doc => {
+                const novel = doc.data();
+                const row = `
+                    <tr>
+                        <td>${novel.title}</td>
+                        <td>${novel.author}</td>
+                        <td>${novel.price}</td>
+                        <td>${novel.release_year}</td>
+                        <td>${novel.genre}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        async function fetchNovels(query) {
+            try {
+                const querySnapshot = await query.get();
+                displayNovels(querySnapshot);
+            } catch (error) {
+                console.error('Error fetching novels:', error);
+            }
+        }
+
+        async function filterByYear() {
+            const year = parseInt(document.getElementById('yearFilter').value);
+            let query = novelsCollection;
+
+            if (year) {
+                query = query.where('release_year', '==', year);
+            }
+
+            fetchNovels(query);
+        }
+
+        async function sortByPrice() {
+            const sortOrder = document.getElementById('priceSort').value;
+            let query = novelsCollection;
+
+            if (sortOrder === 'asc') {
+                query = query.orderBy('price', 'asc');
+            } else if (sortOrder === 'desc') {
+                query = query.orderBy('price', 'desc');
+            }
+
+            fetchNovels(query);
+        }
+
+        async function searchNovels() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            let query = novelsCollection;
+
+            if (searchInput) {
+                query = query.where('title', '>=', searchInput).where('title', '<=', searchInput + '\uf8ff');
+                const authorQuery = novelsCollection.where('author', '>=', searchInput).where('author', '<=', searchInput + '\uf8ff');
+                const titleSnapshot = await query.get();
+                const authorSnapshot = await authorQuery.get();
+                const combinedSnapshot = {docs: [...titleSnapshot.docs, ...authorSnapshot.docs]}
+                displayNovels(combinedSnapshot);
+                return;
+            }
+
+            fetchNovels(query);
+        }
+
+        async function resetFilters() {
+            document.getElementById('yearFilter').value = '';
+            document.getElementById('priceSort').value = '';
+            document.getElementById('searchInput').value = '';
+            fetchNovels(novelsCollection);
+        }
+
+        document.getElementById('priceSort').addEventListener('change', sortByPrice);
+
+        fetchNovels(novelsCollection);
+    </script>
+</body>
+</html>
