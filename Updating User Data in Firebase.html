@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #edit-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        #edit-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        #edit-form input {
+            width: 200px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .error{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>User List</h1>
+    <div id="error-message"></div>
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div id="edit-form">
+        <h2>Edit User</h2>
+        <form id="update-user-form">
+            <label for="edit-name">Name:</label>
+            <input type="text" id="edit-name">
+
+            <label for="edit-email">Email:</label>
+            <input type="email" id="edit-email">
+
+            <button type="submit">Update User</button>
+            <button type="button" onclick="closeEditForm()">Cancel</button>
+        </form>
+        <div id="updateMessage"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            databaseURL: "MY_FIREBASE_DATABASE_URL",
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const usersRef = database.ref('users');
+        const userTableBody = document.querySelector('#user-table tbody');
+        const editForm = document.getElementById('edit-form');
+        const updateForm = document.getElementById('update-user-form');
+        const editNameInput = document.getElementById('edit-name');
+        const editEmailInput = document.getElementById('edit-email');
+        let currentUserId;
+
+        function displayUsers(users) {
+            userTableBody.innerHTML = '';
+            for (const userId in users) {
+                const user = users[userId];
+                const row = `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td><button onclick="openEditForm('${userId}', '${user.name}', '${user.email}')">Edit</button></td>
+                    </tr>
+                `;
+                userTableBody.innerHTML += row;
+            }
+        }
+
+        function openEditForm(userId, name, email) {
+            currentUserId = userId;
+            editNameInput.value = name;
+            editEmailInput.value = email;
+            editForm.style.display = 'block';
+        }
+
+        function closeEditForm() {
+            editForm.style.display = 'none';
+        }
+
+        updateForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const updatedName = editNameInput.value;
+            const updatedEmail = editEmailInput.value;
+
+            usersRef.child(currentUserId).update({ name: updatedName, email: updatedEmail })
+                .then(() => {
+                    closeEditForm();
+                    fetchUsers();
+                    document.getElementById('updateMessage').innerHTML = "<p>User Updated</p>";
+                })
+                .catch((error) => {
+                    document.getElementById('updateMessage').innerHTML = "<p class='error'>Error updating user: " + error.message +"</p>";
+                });
+        });
+
+        function fetchUsers() {
+            usersRef.once('value', (snapshot) => {
+                const users = snapshot.val();
+                if (users) {
+                    displayUsers(users);
+                }
+            }, (error) => {
+                document.getElementById('error-message').textContent = `Error fetching data: ${error.message}`;
+            });
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>
