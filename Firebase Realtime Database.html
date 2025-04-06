@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Users</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        #error-message{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>User List</h1>
+    <div id="error-message"></div>
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            databaseURL: "MY_FIREBASE_DATABASE_URL",
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const usersRef = database.ref('users');
+        const userTableBody = document.querySelector('#user-table tbody');
+        const errorMessageDiv = document.getElementById('error-message');
+
+        usersRef.once('value', (snapshot) => {
+            const users = snapshot.val();
+            if (users) {
+                for (const userId in users) {
+                    const user = users[userId];
+                    const row = `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                        </tr>
+                    `;
+                    userTableBody.innerHTML += row;
+                }
+            } else {
+                errorMessageDiv.textContent = 'No users found in the database.';
+            }
+        }, (error) => {
+            errorMessageDiv.textContent = `Error fetching data: ${error.message}`;
+        });
+    </script>
+</body>
+</html>
