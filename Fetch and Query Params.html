@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Search</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Product Search</h1>
+    </header>
+
+    <main>
+        <aside class="filters">
+            <h2>Filters</h2>
+            <div class="filter-group">
+                <label for="category">Category:</label>
+                <select id="category">
+                    <option value="">All</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="books">Books</option>
+                    <option value="home">Home Goods</option>
+                    </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="min-price">Min Price:</label>
+                <input type="number" id="min-price" placeholder="e.g., 100" min="0">
+            </div>
+
+            <div class="filter-group">
+                <label for="max-price">Max Price:</label>
+                <input type="number" id="max-price" placeholder="e.g., 5000" min="0">
+            </div>
+
+            <div class="filter-group">
+                <label>Sort By Price:</label>
+                <div>
+                    <input type="radio" id="sort-asc" name="sort" value="asc" checked>
+                    <label for="sort-asc">Ascending</label>
+                </div>
+                <div>
+                    <input type="radio" id="sort-desc" name="sort" value="desc">
+                    <label for="sort-desc">Descending</label>
+                </div>
+            </div>
+
+            <button id="search-button">Apply Filters</button>
+        </aside>
+
+        <section id="product-list-container">
+            <h2>Products</h2>
+            <div id="product-list" class="product-grid">
+                <p>Loading products or apply filters to search...</p>
+            </div>
+             <div id="loading-indicator" class="hidden">Loading...</div>
+             <div id="error-message" class="hidden"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
