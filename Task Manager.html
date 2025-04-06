@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        #tasks-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .task {
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        .task span {
+            flex-grow: 1;
+        }
+        .task button {
+            margin-left: 5px;
+        }
+        #edit-form {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        #error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Task Manager</h1>
+
+    <div id="tasks-container">
+        </div>
+
+    <div id="edit-form">
+        <h2>Edit Task</h2>
+        <input type="text" id="edit-task-input">
+        <button id="save-edit-button">Save</button>
+        <button id="cancel-edit-button">Cancel</button>
+    </div>
+
+    <div id="error-message"></div>
+
+    <script>
+        const tasksContainer = document.getElementById('tasks-container');
+        const editForm = document.getElementById('edit-form');
+        const editInput = document.getElementById('edit-task-input');
+        const saveEditButton = document.getElementById('save-edit-button');
+        const cancelEditButton = document.getElementById('cancel-edit-button');
+        const errorMessage = document.getElementById('error-message');
+
+        let editingTaskId = null;
+
+        function displayError(message) {
+            errorMessage.textContent = message;
+            setTimeout(() => {
+                errorMessage.textContent = '';
+            }, 3000); // Clear error after 3 seconds
+        }
+
+        function fetchTasks() {
+            fetch('https://65e0655dabc0c6952ec309f5.mockapi.io/tasks')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(tasks => {
+                    tasksContainer.innerHTML = '';
+                    tasks.forEach(task => {
+                        const taskElement = document.createElement('div');
+                        taskElement.classList.add('task');
+                        taskElement.innerHTML = `
+                            <span>${task.task}</span>
+                            <button class="edit-button" data-id="${task.id}">Edit</button>
+                            <button class="delete-button" data-id="${task.id}">Delete</button>
+                        `;
+                        tasksContainer.appendChild(taskElement);
+                    });
+                    attachEventListeners();
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    displayError('Failed to fetch tasks.');
+                });
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('.edit-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const taskId = button.dataset.id;
+                    const taskText = button.parentElement.querySelector('span').textContent;
+                    editInput.value = taskText;
+                    editingTaskId = taskId;
+                    editForm.style.display = 'block';
+                });
+            });
+
+            document.querySelectorAll('.delete-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const taskId = button.dataset.id;
+                    deleteTask(taskId);
+                });
+            });
+        }
+
+        saveEditButton.addEventListener('click', () => {
+            const updatedTask = editInput.value;
+            if (editingTaskId) {
+                updateTask(editingTaskId, updatedTask);
+            }
+            editForm.style.display = 'none';
+            editingTaskId = null;
+        });
+
+        cancelEditButton.addEventListener('click', () => {
+            editForm.style.display = 'none';
+            editingTaskId = null;
+        });
+
+        function updateTask(taskId, updatedTask) {
+            fetch(`https://65e0655dabc0c6952ec309f5.mockapi.io/tasks/${taskId}`, {
+                method: 'PUT', // or PATCH
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ task: updatedTask }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    fetchTasks();
+                })
+                .catch(error => {
+                    console.error('Update error:', error);
+                    displayError('Failed to update task.');
+                });
+        }
+
+        function deleteTask(taskId) {
+            fetch(`https://65e0655dabc0c6952ec309f5.mockapi.io/tasks/${taskId}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    fetchTasks();
+                })
+                .catch(error => {
+                    console.error('Delete error:', error);
+                    displayError('Failed to delete task.');
+                });
+        }
+
+        fetchTasks();
+    </script>
+</body>
+</html>
